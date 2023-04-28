@@ -11,10 +11,10 @@ Run2 Legacy MSSM Htobb analysis tools for statistical combination
 export CMSSW_GIT_REFERENCE=/nfs/dust/cms/user/${USER}/.cmsgit-cache
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 
-export SCRAM_ARCH=slc7_amd64_gcc700
+export SCRAM_ARCH=slc7_amd64_gcc900
 
-cmsrel CMSSW_10_2_13
-cd CMSSW_10_2_13/src
+cmsrel CMSSW_11_3_4
+cd CMSSW_11_3_4/src
 cmsenv
 
 git clone https://github.com/desy-cms/analysis-models.git Analysis/Models
@@ -22,7 +22,7 @@ git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsA
 
 cd $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit
 git fetch origin
-git checkout v8.2.0
+git checkout v9.0.0
 
 cd ../../
 
