@@ -1,0 +1,24 @@
+imax 2   number of channels
+jmax *   number of backgrounds
+kmax *   number of nuisance parameters
+--------------------------------------------------------------------------------------
+shapes QCD_CR      CR	../input_2017_SL_g1/signal_workspace_400_SR3.root wspace:background
+shapes data_obs    CR	../input_2017_SL_g1/signal_workspace_400_SR3.root wspace:RDHCR
+shapes QCD_SR      SR	../input_2017_SL_g1/signal_workspace_400_SR3.root wspace:signalregion
+shapes data_obs    SR	../input_2017_SL_g1/signal_workspace_400_SR3.root wspace:RDHSR
+shapes signal      SR	../input_2017_SL_g1/signal_workspace_400_SR3.root wspace:signal
+--------------------------------------------------------------------------------------
+bin          SR     CR   
+observation  -1     -1   
+--------------------------------------------------------------------------------------
+bin                               SR		SR	    CR    
+process                           signal 	QCD_SR	QCD_CR
+process                           0      	1 		2	
+rate                              1      	1 		1	
+--------------------------------------------------------------------------------------
+
+# Signal rate uncertainties
+CMS_lumi_13TeV_2017	lnN	  1.02		-	-
+--------------------------------------------------------------------------------------
+
+# Background shape nuisances
