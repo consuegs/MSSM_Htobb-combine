@@ -154,8 +154,8 @@ y_axis.SetTitleSize(0.04)
 legend = ROOT.TLegend(0.14, 0.76, 0.4, 0.6)  # (x1, y1, x2, y2) coordinates for the legend
 if args.plotall == True:
     legend.AddEntry(gr1, "Envelope", "l")
-    legend.AddEntry(gr2, "Quadratic", "l")
-    legend.AddEntry(gr3, "Linear", "l")
+    legend.AddEntry(gr2, "Linear", "l")
+    legend.AddEntry(gr3, "Quadratic", "l")
 legend.SetBorderSize(0)  # Remove the border of the legend
 legend.Draw()
 
