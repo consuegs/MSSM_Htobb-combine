@@ -261,15 +261,18 @@ int AnalysisWorkspaceSR1()
 		///		
 
 		// pdf index 0 -> power-based linear TF
-		double TF_pol1_linear_centralValue =  4.42596e-03; //qcd mc linear function
+		//double TF_pol1_linear_centralValue =  4.42596e-03; //qcd mc linear function
+		double TF_pol1_linear_centralValue =  4.4260e-03; //qcd mc linear function
 		RooRealVar TF_pol1_linear_2018("TF_pol1_linear_2018", "TF_pol1_linear_2018", TF_pol1_linear_centralValue, 0, 0.1);
 		RooArgList varsTF_pol1(mbb, TF_pol1_linear_2018);
 		RooPolynomial TF_pol1("TF_pol1", "TF_pol1", mbb, RooArgList(TF_pol1_linear_2018), 1);
 		cout << "TF_pol1_linear_2018     = " << TF_pol1_linear_2018.getVal() << endl;
 
 		//pdf index 1 -> power-based quadratic TF
-		double TF_pol2_linear_centralValue = -6.1717e-04 ; //qcd mc quadratic function
-		double TF_pol2_quad_centralValue   = 3.1505e-06 ; //qcd mc quadratic function
+		//double TF_pol2_linear_centralValue = -6.1717e-04 ; //qcd mc quadratic function
+		//double TF_pol2_quad_centralValue   = 3.1505e-06 ; //qcd mc quadratic function
+		double TF_pol2_linear_centralValue = 5.3536e-10 ; //qcd mc quadratic function
+		double TF_pol2_quad_centralValue   = 2.7770e-06 ; //qcd mc quadratic function
 		RooRealVar TF_pol2_quad_2018("TF_pol2_quad_2018", "TF_pol2_quad_2018", TF_pol2_quad_centralValue, -0.001, 0.001);
 		RooRealVar TF_pol2_linear_2018("TF_pol2_linear_2018", "TF_pol2_linear_2018", TF_pol2_linear_centralValue, -0.1, 0.1);
 		RooArgList varsTF(mbb, TF_pol2_quad_2018, TF_pol2_linear_2018);
@@ -295,13 +298,13 @@ int AnalysisWorkspaceSR1()
 		wspace.import(signal_norm);
 		//wspace.import(TF);
 
-		wspace.import(TF_pol1);
 		wspace.import(TF_pol2);
+		wspace.import(TF_pol1);
 
-		wspace.factory("PROD::alternative0(background,TF_pol1)"); //index 0
+		wspace.factory("PROD::alternative0(background,TF_pol2)"); //index 0
 		wspace.import(alternative0_norm);
 
-		wspace.factory("PROD::alternative1(background,TF_pol2)"); //index 1
+		wspace.factory("PROD::alternative1(background,TF_pol1)"); //index 1
 		wspace.import(alternative1_norm);
 
 		RooAbsPdf *alternative0 = wspace.pdf("alternative0");

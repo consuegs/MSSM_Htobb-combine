@@ -300,13 +300,13 @@ int AnalysisWorkspaceSR2()
 		wspace.import(signal_norm);
 		//wspace.import(TF);
 
-		wspace.import(TF_pol1);
 		wspace.import(TF_pol2);
+		wspace.import(TF_pol1);
 
-		wspace.factory("PROD::alternative0(background,TF_pol1)"); //index 0
+		wspace.factory("PROD::alternative0(background,TF_pol2)"); //index 0
 		wspace.import(alternative0_norm);
 
-		wspace.factory("PROD::alternative1(background,TF_pol2)"); //index 1
+		wspace.factory("PROD::alternative1(background,TF_pol1)"); //index 1
 		wspace.import(alternative1_norm);
 
 		RooAbsPdf *alternative0 = wspace.pdf("alternative0");
@@ -324,7 +324,7 @@ int AnalysisWorkspaceSR2()
 		wspace.import(multipdf_norm);
 
 		wspace.Write();
-		cout << "File created: signal_workspace_" + Tsrmasses[mass] + "_SR2.root" << endl;
+		cout << "File created: signal_workspace_" + Tsrmasses[mass] + "_SR1.root" << endl;
 		fOut->Close();
 	}
 	return 0;
