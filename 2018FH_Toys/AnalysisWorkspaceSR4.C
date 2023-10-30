@@ -22,10 +22,10 @@
 using namespace std;
 using namespace RooFit;
 
-int AnalysisWorkspaceSR2_bias()
+int AnalysisWorkspaceSR4()
 {
 
-	std::ofstream textout("figs/AnalysisWorkspaceSR2.txt");
+	std::ofstream textout("figs/AnalysisWorkspaceSR4.txt");
 	TString dir("/afs/desy.de/user/l/leyvaped/public/rootfiles_july2023/");
 	TString dir_param("/nfs/dust/cms/user/leyvaped/Analyses/MSSM/FullRun2/Combine/April_2023/CMSSW_11_3_4/src/Analysis/Combine/Run2018/input_doubleCB/");
 
@@ -33,15 +33,15 @@ int AnalysisWorkspaceSR2_bias()
 
 	// As usual, load the combine library to get access to the RooParametricHist
 	gSystem->Load("libHiggsAnalysisCombinedLimit.so");
-	
-	vector<double> lumiscalefactors = { 28.75, 23.26, 29.35, 36.57 };	//SR2
-	vector<double> prefiringweights = { 0.99939, 0.99932, 0.99924, 0.99914};	//from prefiring weigth studies, saved in csv format in github, e.g.: https://github.com/desy-cms/analysis-calibrations/blob/master/2018/extras/2018_Full_Hadronic_L1Prefiring.csv
-	vector<string> srmasses = { "400", "450", "500", "600" };	//SR2
-	TString Tsrmasses[4] 	= { "400", "450", "500", "600" };	//SR2
-	vector<float> JER_sigma_shift = { 0.00144, 0.00173, 0.00135, 0.00398 }; //JER nuisance shift (sigma)
-	vector<float> JER_norm_shift  = { 0.00770, 0.00571, 0.00426, 0.00250 }; //JES nuisance shift (norm)
-	vector<float> JES_mean_shift  = { 0.00891, 0.00933, 0.00946, 0.00893 }; //JES nuisance shift (mean)
-	vector<float> JES_norm_shift  = { 0.03589, 0.02645, 0.01981, 0.01299 }; //JES nuisance shift (norm)
+
+	vector<double> lumiscalefactors = { 35.77, 34.61, 34.05, 33.24, 31.45 };	//SR4
+	vector<double> prefiringweights = { 0.99883, 0.99871, 0.99869, 0.99857, 0.99841 };	//from prefiring weigth studies, saved in csv format in github, e.g.: https://github.com/desy-cms/analysis-calibrations/blob/master/2018/extras/2018_Full_Hadronic_L1Prefiring.csv
+	vector<string> srmasses = { "1000", "1200", "1400", "1600", "1800" };	//SR4
+	TString Tsrmasses[5]    = { "1000", "1200", "1400", "1600", "1800" };	//SR4
+	vector<float> JER_sigma_shift = { 0.00210, 0.00382, 0.00365, 0.00339, 0.00459 }; //JER nuisance shift (sigma)
+	vector<float> JER_norm_shift  = { 0.00113, 0.00065, 0.00049, 0.00029, 0.00031 }; //JER nuisance shift (norm)
+	vector<float> JES_mean_shift  = { 0.00696, 0.00647, 0.00629, 0.00613, 0.00598 }; //JES nuisance shift (mean)
+	vector<float> JES_norm_shift  = { 0.00520, 0.00325, 0.00251, 0.00124, 0.00150 }; //JES nuisance shift (norm)
 	
 	//some warnings
 	if (!(lumiscalefactors.size() == srmasses.size())) 	{   cout << "WARNING: Number of mass points and lumi scale factors does not agree. Please check what you provided." << endl; 		return -1; 	}
@@ -62,8 +62,8 @@ int AnalysisWorkspaceSR2_bias()
 	}
 
 	// A search in a mbb tail, define mbb as our variable
-	int m12_min = 320, m12_max = 800;
-	RooRealVar mbb("mbb", "m_{12}", m12_min, m12_max);	//SR 2: 400/450/500/600
+	int m12_min = 500, m12_max = 2000;
+	RooRealVar mbb("mbb", "m_{12}", m12_min, m12_max);	//SR 4: 1000/1200/1400/1600/1800
 	RooArgList vars(mbb);
 
 	//loop over mass-points in the mass range
@@ -108,7 +108,7 @@ int AnalysisWorkspaceSR2_bias()
 		double scaleSRtoys = SRHist_norm->GetEntries()/h_cr_in->GetEntries();
 		SRHist->Scale(scaleSRtoys);
 		//int normSR = SRHist->Integral(SRHist->FindBin(m12_min),SRHist->FindBin(m12_max));
-		int normSR = 289419;
+		int normSR = 73877;
 		cout << "normSR: " << normSR << endl;
 		cout << "estimation from CR and TF: " <<  SRHist->Integral(SRHist->FindBin(m12_min),SRHist->FindBin(m12_max)) << endl;
 		cout << "percent. difference: " <<  (normSR - SRHist->Integral(SRHist->FindBin(m12_min),SRHist->FindBin(m12_max)))/normSR*100 << endl;
@@ -122,16 +122,22 @@ int AnalysisWorkspaceSR2_bias()
 		/// GET BG PARAMETRIZATION FROM ROOFIT
 		///
 
-		TFile *f_bgfit = new TFile(dir + "/workspaces_bkg_CR/4FRs/FR2/320to800/extnovosibirsk/workspace/FitContainer_workspace.root", "READ");
+		TFile *f_bgfit = new TFile(dir + "/workspaces_bkg_CR/4FRs/FR4/500to2000/extnovosibirsk/workspace/FitContainer_workspace.root", "READ");
 		RooWorkspace *w_bgfit = (RooWorkspace*) f_bgfit->Get("workspace");
 		RooAbsPdf *background = w_bgfit->pdf("background");
 		RooRealVar background_norm("background_norm", "Number of background events", normCR, 0.9 *normCR, 1.1 *normCR);
 		
+		// Change the names of the parameters
+		w_bgfit->var("peak")->SetName("peak_2018");
+		w_bgfit->var("tail")->SetName("tail_2018");
+		w_bgfit->var("par4")->SetName("par4_2018");
+		w_bgfit->var("width")->SetName("width_2018");
+
 		///
 		/// GET SIG PARAMETRIZATION FROM ROOFIT
 		///
 
-		TFile *f_signal_in_unbinned = new TFile(dir_param + "signal_m" + Tsrmasses[mass] + "_SR2.root", "READ");
+		TFile *f_signal_in_unbinned = new TFile(dir_param + "signal_m" + Tsrmasses[mass] + "_SR4.root", "READ");
 		RooWorkspace *w_signalfit = (RooWorkspace*) f_signal_in_unbinned->Get("w");
 		RooAbsPdf *signalx = w_signalfit->pdf("signal_dcb");
 		signalx->SetName("signal");
@@ -155,23 +161,24 @@ int AnalysisWorkspaceSR2_bias()
 		cout << "n1 = " << n1_ws->getVal() << endl;
 		cout << "n2 = " << n2_ws->getVal() << endl;
 		
+
 		RooPlot *xframe = mbb.frame();
 		sigHist.plotOn(xframe, LineColor(1), MarkerColor(1));
 		signalx->plotOn(xframe, LineColor(2));
 		TCanvas *c1 = new TCanvas("c1", "c1", 600, 600);
 		xframe->Draw();
 		c1->Update();
-		c1->Print("figs/sig_SR2_" + Tsrmasses[mass] + ".png");
-		c1->Print("figs/sig_SR2_" + Tsrmasses[mass] + ".pdf");
+		c1->Print("figs/sig_SR4_" + Tsrmasses[mass] + ".png");
+		c1->Print("figs/sig_SR4_" + Tsrmasses[mass] + ".pdf");
 		delete c1;
 
 	    ///
 		/// SYSTEMATIC VARIATIONS OF THE SIGNAL SHAPE PARAMETERS
 		///
-
+		
 		RooRealVar theta_JES("CMS_JES_2018", "CMS_JES_2018", 0., -5., 5.);
 		RooRealVar theta_JER("CMS_JER_2018", "CMS_JER_2018", 0., -5., 5.);
-
+	    
 		RooRealVar shift_JES_mean("shift_JES_mean", "shift_JES_mean", JES_mean_shift[mass]);
 		RooRealVar shift_JES_norm("shift_JES_norm", "shift_JES_norm", JES_norm_shift[mass]);
 		RooRealVar shift_JER_Sigma("shift_JER_Sigma", "shift_JER_Sigma", JER_sigma_shift[mass]);
@@ -241,7 +248,7 @@ int AnalysisWorkspaceSR2_bias()
 		RooFormulaVar signal_norm("signal_norm",
 			"@0 + @1*@2 + @3*@4",
 			RooArgList(norm, shift_JES_norm, theta_JES, shift_JER_norm, theta_JER));
-
+	
 		norm.setVal(normSignal);
 		norm.setConstant(true);
 
@@ -253,41 +260,35 @@ int AnalysisWorkspaceSR2_bias()
 		/// DEFINE TRANSFER FACTOR PDF
 		///		
 		
-		///
-		/// DEFINE TRANSFER FACTOR PDF
-		///		
+		// pdf index 0 -> power-based linear TF
+		double TF_pol1_linear_centralValue =  2.5737e-02; //qcd mc linear function
+		RooRealVar TF_pol1_linear_2018("TF_pol1_linear_2018", "TF_pol1_linear_2018", TF_pol1_linear_centralValue, 0, 0.1);
+		RooArgList varsTF_pol1(mbb, TF_pol1_linear_2018);
+		RooPolynomial TF_pol1("TF_pol1", "TF_pol1", mbb, RooArgList(TF_pol1_linear_2018), 1);
+		cout << "TF_pol1_linear_2018     = " << TF_pol1_linear_2018.getVal() << endl;
 
-		//quadratic TF
-		double TF_pol2_linear_centralValue = 3.3172e-03 ; //qcd mc quadratic function
-		double TF_pol2_quad_centralValue   = 9.5524e-07 ; //qcd mc quadratic function
-		RooRealVar TF_pol2_linear("TF_pol2_linear", "TF_pol2_linear", TF_pol2_linear_centralValue, -0.1, 0.1);
-		RooRealVar TF_pol2_quad("TF_pol2_quad", "TF_pol2_quad", TF_pol2_quad_centralValue, -0.001, 0.001);
-		RooArgList varsTF(mbb, TF_pol2_quad, TF_pol2_linear);
-		RooPolynomial TF_pol2("TF_pol2", "TF_pol2", mbb, RooArgList(TF_pol2_linear, TF_pol2_quad), 1);
+		//pdf index 1 -> power-based quadratic TF
+		double TF_pol2_linear_centralValue = 1.0077e-03 ; //qcd mc quadratic function
+		double TF_pol2_quad_centralValue   = 9.5582e-07 ; //qcd mc quadratic function
+		RooRealVar TF_pol2_quad_2018("TF_pol2_quad_2018", "TF_pol2_quad_2018", TF_pol2_quad_centralValue, -0.001, 0.001);
+		RooRealVar TF_pol2_linear_2018("TF_pol2_linear_2018", "TF_pol2_linear_2018", TF_pol2_linear_centralValue, -0.1, 0.1);
+		RooArgList varsTF(mbb, TF_pol2_quad_2018, TF_pol2_linear_2018);
+		RooPolynomial TF_pol2("TF_pol2", "TF_pol2", mbb, RooArgList(TF_pol2_linear_2018, TF_pol2_quad_2018), 1);
 
-		cout << "TF_pol2_quad       = " << TF_pol2_quad.getVal() << endl;
-		cout << "TF_pol2_linear     = " << TF_pol2_linear.getVal() << endl;
-
+		cout << "TF_pol2_quad_2018       = " << TF_pol2_quad_2018.getVal() << endl;
+		cout << "TF_pol2_linear_2018     = " << TF_pol2_linear_2018.getVal() << endl;
 		
-		//linearTF
-		double TF_pol1_linear_centralValue =  5.8445e-03; //qcd mc linear function
-		RooRealVar TF_pol1_linear("TF_pol1_linear", "TF_pol1_linear", TF_pol1_linear_centralValue, 0, 0.1);
-		RooArgList varsTF_pol1(mbb, TF_pol1_linear);
-		RooPolynomial TF_pol1("TF_pol1", "TF_pol1", mbb, RooArgList(TF_pol1_linear), 1);
-		cout << "TF_pol1_linear     = " << TF_pol1_linear.getVal() << endl;
-
-
-		 
 		
-		//RooRealVar signalregion_norm("signalregion_norm", "Signal normalization", normSR, 0.9 *normSR, 1.1 *normSR);
+		//RooRealVar signalregion_norm("signalregion_norm", "Signal normalization", normSR, 0.1 *normSR, 1.9 *normSR);
 		RooRealVar alternative0_norm("alternative0_norm", "Signal alternative0_norm", normSR, 0.1 *normSR, 1.9 *normSR);
 		RooRealVar alternative1_norm("alternative1_norm", "Signal alternative1_norm", normSR, 0.1 *normSR, 1.9 *normSR);
 		RooRealVar multipdf_norm("multipdf_norm", "Signal multipdf_norm", normSR, 0.1 *normSR, 1.9 *normSR);
+		
 
 		//Output file
-		TFile *fOut = new TFile("input_2018_FH_bias/signal_workspace_" + Tsrmasses[mass] + "_SR2.root", "RECREATE");
+		TFile *fOut = new TFile("input_2018_FH/signal_workspace_" + Tsrmasses[mass] + "_SR4.root", "RECREATE");
 		RooWorkspace wspace("wspace", "wspace");
-
+		
 		wspace.import(RDHCR);
 		wspace.import(RDHSR);
 		wspace.import(signal);
@@ -296,13 +297,13 @@ int AnalysisWorkspaceSR2_bias()
 		wspace.import(signal_norm);
 		//wspace.import(TF);
 
-		wspace.import(TF_pol2);
 		wspace.import(TF_pol1);
+		wspace.import(TF_pol2);
 
-		wspace.factory("PROD::alternative0(background,TF_pol2)"); //index 0
+		wspace.factory("PROD::alternative0(background,TF_pol1)"); //index 0
 		wspace.import(alternative0_norm);
 
-		wspace.factory("PROD::alternative1(background,TF_pol1)"); //index 1
+		wspace.factory("PROD::alternative1(background,TF_pol2)"); //index 1
 		wspace.import(alternative1_norm);
 
 		RooAbsPdf *alternative0 = wspace.pdf("alternative0");
@@ -320,7 +321,7 @@ int AnalysisWorkspaceSR2_bias()
 		wspace.import(multipdf_norm);
 
 		wspace.Write();
-		cout << "File created: signal_workspace_" + Tsrmasses[mass] + "_SR2.root" << endl;
+		cout << "File created: signal_workspace_" + Tsrmasses[mass] + "_SR4.root" << endl;
 		fOut->Close();
 	}
 	return 0;

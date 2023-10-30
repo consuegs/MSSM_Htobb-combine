@@ -11,7 +11,7 @@ masses_SR2 = [400, 450, 500, 600]
 masses_SR3 = [600, 700, 800, 900, 1000]
 masses_SR4 = [1000, 1200, 1400, 1600, 1800]
 
-template_file = "/nfs/dust/cms/user/leyvaped/Analyses/MSSM/FullRun2/Combine/April_2023/CMSSW_11_3_4/src/Analysis/Combine/Run2018/Inputs_Unc/datacard_Analysis_template.txt.txt"
+template_file = "/nfs/dust/cms/user/leyvaped/Analyses/MSSM/FullRun2/Combine/April_2023/CMSSW_11_3_4/src/Analysis/Combine/Run2018/Inputs_Unc/datacard_Analysis_template_SYST_VR.txt"
 L1Prefiring_csv_file = "2018_Full_Hadronic_L1Prefiring.csv"
 HEMcorrect_csv_file  = "2018_Full_Hadronic_HEMcorrection.csv"
 OnlbtagSF_csv_file   = "2018_Full_Hadronic_onlinebtag_syst.csv"
@@ -39,9 +39,10 @@ with open(JKTESF_csv_file, "r") as f:
     JKTESF_systematics_dict = {row["Higgs_mass_GeV"]: (row["systematics_down"], row["systematics_up"]) for row in reader}
 
 
+
 for subrange, masses in [("SR1", masses_SR1), ("SR2", masses_SR2), ("SR3", masses_SR3), ("SR4", masses_SR4)]:
     for mass in masses:
-        os.chdir("datacards_bias")
+        os.chdir("datacards_vr")
         with open(template_file, "r") as f:
             datacard = f.read().replace("MASS", str(mass)).replace("SUBRANGE", subrange)
             
