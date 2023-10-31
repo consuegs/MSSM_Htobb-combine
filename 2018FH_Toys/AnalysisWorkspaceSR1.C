@@ -260,7 +260,7 @@ int AnalysisWorkspaceSR1()
 		/// DEFINE TRANSFER FACTOR PDF
 		///		
 
-		// pdf index 0 -> power-based linear TF
+		// pdf index 1 -> power-based linear TF
 		//double TF_pol1_linear_centralValue =  4.42596e-03; //qcd mc linear function
 		double TF_pol1_linear_centralValue =  4.4260e-03; //qcd mc linear function
 		RooRealVar TF_pol1_linear_2018("TF_pol1_linear_2018", "TF_pol1_linear_2018", TF_pol1_linear_centralValue, 0, 0.1);
@@ -268,7 +268,7 @@ int AnalysisWorkspaceSR1()
 		RooPolynomial TF_pol1("TF_pol1", "TF_pol1", mbb, RooArgList(TF_pol1_linear_2018), 1);
 		cout << "TF_pol1_linear_2018     = " << TF_pol1_linear_2018.getVal() << endl;
 
-		//pdf index 1 -> power-based quadratic TF
+		//pdf index 0 -> power-based quadratic TF
 		//double TF_pol2_linear_centralValue = -6.1717e-04 ; //qcd mc quadratic function
 		//double TF_pol2_quad_centralValue   = 3.1505e-06 ; //qcd mc quadratic function
 		double TF_pol2_linear_centralValue = 5.3536e-10 ; //qcd mc quadratic function
